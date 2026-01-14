@@ -42,7 +42,7 @@ const Home = () => {
     const navigate = useNavigate();
 
     return (
-        <div style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="container">
             {/* Hero Section */}
             <section style={{ textAlign: 'center', padding: '80px 0' }}>
                 <motion.h1
@@ -70,7 +70,7 @@ const Home = () => {
                     transition={{ delay: 0.1 }}
                     style={{
                         color: 'var(--text-muted)',
-                        fontSize: '1.25rem',
+                        fontSize: 'max(1rem, 1.25vw)',
                         maxWidth: '600px',
                         margin: '0 auto 40px',
                         lineHeight: '1.6'
@@ -82,7 +82,7 @@ const Home = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}
+                    style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}
                 >
                     <button className="btn-primary" onClick={() => navigate('/signup')}>
                         Get Started <ArrowRight size={20} />
@@ -122,7 +122,7 @@ const Home = () => {
             </div>
 
             {/* Listings Section */}
-            <section>
+            <section style={{ paddingBottom: '80px' }}>
                 <div style={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -135,7 +135,7 @@ const Home = () => {
 
                 <div style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(max(280px, 20vw), 1fr))',
                     gap: '24px'
                 }}>
                     {businesses.map((biz) => (
