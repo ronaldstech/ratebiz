@@ -30,7 +30,7 @@ const Navbar = () => {
             left: '0',
             right: '0',
             zIndex: 1000,
-            padding: isScrolled ? '12px 16px' : '20px 16px',
+            padding: isScrolled ? '8px 8px' : '12px 8px',
             transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
         }}>
             <motion.div
@@ -40,11 +40,11 @@ const Navbar = () => {
                 style={{
                     maxWidth: '1200px',
                     margin: '0 auto',
-                    padding: '8px 24px',
+                    padding: '8px 16px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    borderRadius: '24px',
+                    borderRadius: '20px',
                     border: '1px solid var(--glass-border)',
                     background: isScrolled ? 'rgba(15, 23, 42, 0.8)' : 'var(--glass-bg)',
                     boxShadow: isScrolled ? '0 10px 30px -10px rgba(0,0,0,0.5)' : '0 8px 32px 0 rgba(0, 0, 0, 0.37)'

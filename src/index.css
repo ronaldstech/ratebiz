@@ -39,6 +39,7 @@ body {
 
 .main-content {
     flex: 1;
+    padding-top: 50px;
 }
 
 .container {
@@ -136,11 +137,11 @@ body {
 /* Responsiveness */
 @media (max-width: 768px) {
     .container {
-        padding: 0 16px;
+        padding: 0 12px;
     }
 
     .glass-card {
-        padding: 24px !important;
+        padding: 20px !important;
     }
 
     section {
