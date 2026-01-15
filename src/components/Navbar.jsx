@@ -135,32 +135,69 @@ const Navbar = () => {
 
                 {/* Desktop Actions */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }} className="desktop-actions">
-                    <Link to="/login" style={{
-                        textDecoration: 'none',
-                        color: 'var(--text-muted)',
-                        fontSize: '0.9rem',
-                        fontWeight: '600',
-                        transition: 'color 0.3s ease'
-                    }}
-                        onMouseEnter={(e) => e.target.style.color = '#fff'}
-                        onMouseLeave={(e) => e.target.style.color = 'var(--text-muted)'}
-                    >
-                        Sign In
-                    </Link>
-                    <motion.button
-                        whileHover={{ y: -2, boxShadow: '0 6px 20px rgba(37, 99, 235, 0.4)' }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => navigate('/signup')}
-                        className="btn-primary"
-                        style={{
-                            padding: '10px 24px',
-                            fontSize: '0.875rem',
-                            borderRadius: '12px'
-                        }}
-                    >
-                        Join Now
-                        <ArrowRight size={16} />
-                    </motion.button>
+                    {localStorage.getItem('ratebiz_token') ? (
+                        <>
+                            <Link to="/my-businesses" style={{
+                                textDecoration: 'none',
+                                color: 'var(--text-muted)',
+                                fontSize: '0.9rem',
+                                fontWeight: '600',
+                                transition: 'color 0.3s ease'
+                            }}
+                                onMouseEnter={(e) => e.target.style.color = '#fff'}
+                                onMouseLeave={(e) => e.target.style.color = 'var(--text-muted)'}
+                            >
+                                Businesses
+                            </Link>
+                            <button
+                                onClick={() => {
+                                    localStorage.removeItem('ratebiz_token');
+                                    localStorage.removeItem('ratebiz_user');
+                                    navigate('/login');
+                                }}
+                                className="btn-primary"
+                                style={{
+                                    padding: '8px 20px',
+                                    fontSize: '0.875rem',
+                                    borderRadius: '12px',
+                                    background: 'rgba(239, 68, 68, 0.2)',
+                                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                                    color: '#fca5a5'
+                                }}
+                            >
+                                Logout
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <Link to="/login" style={{
+                                textDecoration: 'none',
+                                color: 'var(--text-muted)',
+                                fontSize: '0.9rem',
+                                fontWeight: '600',
+                                transition: 'color 0.3s ease'
+                            }}
+                                onMouseEnter={(e) => e.target.style.color = '#fff'}
+                                onMouseLeave={(e) => e.target.style.color = 'var(--text-muted)'}
+                            >
+                                Sign In
+                            </Link>
+                            <motion.button
+                                whileHover={{ y: -2, boxShadow: '0 6px 20px rgba(37, 99, 235, 0.4)' }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={() => navigate('/signup')}
+                                className="btn-primary"
+                                style={{
+                                    padding: '10px 24px',
+                                    fontSize: '0.875rem',
+                                    borderRadius: '12px'
+                                }}
+                            >
+                                Join Now
+                                <ArrowRight size={16} />
+                            </motion.button>
+                        </>
+                    )}
                 </div>
 
                 {/* Mobile Menu Toggle */}

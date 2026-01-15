@@ -1,10 +1,102 @@
 import React, { useState } from 'react';
-import { Mail, Lock, User, Building2, UserPlus, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Mail, Lock, User, UserPlus, ArrowRight, Eye, EyeOff, Phone } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 const SignUp = () => {
-    const [role, setRole] = useState('user'); // 'user' or 'business'
+    const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        password: '',
+        phone: ''
+    });
+
+    const [errors, setErrors] = useState({});
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+        if (errors[name]) {
+            setErrors(prev => ({
+                ...prev,
+                [name]: ''
+            }));
+        }
+    };
+
+    const validateForm = () => {
+        const newErrors = {};
+        if (!formData.name.trim()) newErrors.name = 'Name is required';
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!formData.email.trim()) {
+            newErrors.email = 'Email is required';
+        } else if (!emailRegex.test(formData.email)) {
+            newErrors.email = 'Invalid email address';
+        }
+
+        if (!formData.password) {
+            newErrors.password = 'Password is required';
+        } else if (formData.password.length < 8) {
+            newErrors.password = 'Password must be at least 8 characters';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!validateForm()) return;
+
+        setIsLoading(true);
+
+        const payload = {
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+            phone: formData.phone,
+            role: 'user'
+        };
+
+        try {
+            const response = await fetch('https://unimarket-mw.com/ratebiz/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                console.log('Registration successful:', data);
+                alert("Account created successfully!");
+                navigate('/login');
+            } else {
+                console.error('Registration failed:', data);
+                setErrors(prev => ({
+                    ...prev,
+                    submit: data.message || data.error || "Registration failed."
+                }));
+            }
+        } catch (error) {
+            console.error('Network error:', error);
+            setErrors(prev => ({
+                ...prev,
+                submit: "Network error. Please try again later."
+            }));
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <div style={{
@@ -27,121 +119,116 @@ const SignUp = () => {
                 }}
             >
                 <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-                    <h1 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '8px', background: 'linear-gradient(to right, #fff, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                    <h1 className="gradient-text" style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '8px' }}>
                         Create Account
                     </h1>
-                    <p style={{ color: 'var(--text-muted)' }}>Join RateBiz to start reviewing or growing your business.</p>
+                    <p style={{ color: 'var(--text-muted)' }}>Join RateBiz to start reviewing businesses.</p>
                 </div>
 
-                <div style={{
-                    display: 'flex',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    padding: '4px',
-                    borderRadius: '12px',
-                    marginBottom: '32px',
-                    position: 'relative'
-                }}>
-                    <motion.div
-                        style={{
-                            position: 'absolute',
-                            top: '4px',
-                            left: role === 'user' ? '4px' : 'calc(50% + 2px)',
-                            width: '48%',
-                            height: 'calc(100% - 8px)',
-                            background: 'var(--primary)',
-                            borderRadius: '8px',
-                            zIndex: 0
-                        }}
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    />
+                {errors.submit && (
+                    <div className="error-banner" style={{
+                        background: 'rgba(255, 59, 48, 0.1)',
+                        border: '1px solid var(--error)',
+                        color: 'var(--error)',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        marginBottom: '20px',
+                        textAlign: 'center'
+                    }}>
+                        {errors.submit}
+                    </div>
+                )}
+
+                <form onSubmit={handleSubmit}>
+                    <div className="form-grid" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                        <div className="input-group">
+                            <label>Full Name</label>
+                            <div className="input-wrapper">
+                                <User size={18} className="input-icon" />
+                                <input
+                                    type="text"
+                                    name="name"
+                                    placeholder="John Doe"
+                                    value={formData.name}
+                                    onChange={handleInputChange}
+                                    className={errors.name ? 'error' : ''}
+                                />
+                            </div>
+                            {errors.name && <span className="error-text">{errors.name}</span>}
+                        </div>
+
+                        <div className="input-group">
+                            <label>Phone Number</label>
+                            <div className="input-wrapper">
+                                <Phone size={18} className="input-icon" />
+                                <input
+                                    type="tel"
+                                    name="phone"
+                                    placeholder="+1 234 567 890"
+                                    value={formData.phone}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="input-group">
+                            <label>Email Address</label>
+                            <div className="input-wrapper">
+                                <Mail size={18} className="input-icon" />
+                                <input
+                                    type="email"
+                                    name="email"
+                                    placeholder="you@example.com"
+                                    value={formData.email}
+                                    onChange={handleInputChange}
+                                    className={errors.email ? 'error' : ''}
+                                />
+                            </div>
+                            {errors.email && <span className="error-text">{errors.email}</span>}
+                        </div>
+
+                        <div className="input-group">
+                            <label>Password</label>
+                            <div className="input-wrapper">
+                                <Lock size={18} className="input-icon" />
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    name="password"
+                                    placeholder="••••••••"
+                                    value={formData.password}
+                                    onChange={handleInputChange}
+                                    className={errors.password ? 'error' : ''}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="password-toggle"
+                                >
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
+                            {errors.password && <span className="error-text">{errors.password}</span>}
+                        </div>
+                    </div>
+
                     <button
-                        onClick={() => setRole('user')}
-                        style={{
-                            flex: 1,
-                            padding: '10px',
-                            border: 'none',
-                            background: 'transparent',
-                            color: role === 'user' ? 'white' : 'var(--text-muted)',
-                            cursor: 'pointer',
-                            fontWeight: '600',
-                            zIndex: 1,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '8px'
-                        }}
+                        className="btn-primary"
+                        style={{ width: '100%', padding: '14px', marginTop: '24px' }}
+                        disabled={isLoading}
                     >
-                        <User size={18} /> User
-                    </button>
-                    <button
-                        onClick={() => setRole('business')}
-                        style={{
-                            flex: 1,
-                            padding: '10px',
-                            border: 'none',
-                            background: 'transparent',
-                            color: role === 'business' ? 'white' : 'var(--text-muted)',
-                            cursor: 'pointer',
-                            fontWeight: '600',
-                            zIndex: 1,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '8px'
-                        }}
-                    >
-                        <Building2 size={18} /> Business
-                    </button>
-                </div>
-
-                <form onSubmit={(e) => e.preventDefault()}>
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={role}
-                            initial={{ opacity: 0, x: role === 'user' ? -10 : 10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: role === 'user' ? 10 : -10 }}
-                            transition={{ duration: 0.3 }}
-                        >
-                            <div className="input-group">
-                                <label>{role === 'user' ? 'Full Name' : 'Business Owner Name'}</label>
-                                <div style={{ position: 'relative' }}>
-                                    <User size={18} style={{ position: 'absolute', left: '16px', top: '14px', color: 'var(--text-muted)' }} />
-                                    <input type="text" placeholder="John Doe" style={{ paddingLeft: '48px' }} />
-                                </div>
-                            </div>
-
-                            {role === 'business' && (
-                                <div className="input-group">
-                                    <label>Business Name</label>
-                                    <div style={{ position: 'relative' }}>
-                                        <Building2 size={18} style={{ position: 'absolute', left: '16px', top: '14px', color: 'var(--text-muted)' }} />
-                                        <input type="text" placeholder="Tech Solutions Inc" style={{ paddingLeft: '48px' }} />
-                                    </div>
-                                </div>
-                            )}
-
-                            <div className="input-group">
-                                <label>Email Address</label>
-                                <div style={{ position: 'relative' }}>
-                                    <Mail size={18} style={{ position: 'absolute', left: '16px', top: '14px', color: 'var(--text-muted)' }} />
-                                    <input type="email" placeholder="you@example.com" style={{ paddingLeft: '48px' }} />
-                                </div>
-                            </div>
-
-                            <div className="input-group">
-                                <label>Password</label>
-                                <div style={{ position: 'relative' }}>
-                                    <Lock size={18} style={{ position: 'absolute', left: '16px', top: '14px', color: 'var(--text-muted)' }} />
-                                    <input type="password" placeholder="••••••••" style={{ paddingLeft: '48px' }} />
-                                </div>
-                            </div>
-                        </motion.div>
-                    </AnimatePresence>
-
-                    <button className="btn-primary" style={{ width: '100%', padding: '14px', marginTop: '16px' }}>
-                        <UserPlus size={20} />
-                        Create {role === 'user' ? 'User' : 'Business'} Account
+                        {isLoading ? (
+                            <motion.div
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                            >
+                                <ArrowRight size={20} />
+                            </motion.div>
+                        ) : (
+                            <>
+                                <UserPlus size={20} />
+                                Create Account
+                            </>
+                        )}
                     </button>
                 </form>
 
