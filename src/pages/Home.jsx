@@ -92,13 +92,16 @@ const Home = () => {
                                     <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', padding: '4px 10px', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.8rem', color: '#fbbf24', fontWeight: '600', border: '1px solid rgba(255,255,255,0.1)' }}>
                                         <Star size={12} fill="#fbbf24" stroke="none" /> {parseFloat(biz.rating || 0).toFixed(1)}
                                     </div>
-                                    <div style={{ position: 'absolute', bottom: '12px', left: '12px', background: 'rgba(37, 99, 235, 0.2)', backdropFilter: 'blur(8px)', padding: '4px 10px', borderRadius: '10px', fontSize: '0.7rem', color: '#60a5fa', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', border: '1px solid rgba(37, 99, 235, 0.3)' }}>
+                                    <div style={{ position: 'absolute', bottom: '12px', left: '12px', background: 'rgba(255, 28, 28, 1)', backdropFilter: 'blur(8px)', padding: '4px 10px', borderRadius: '10px', fontSize: '0.7rem', color: '#ffffffff', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', border: '1px solid rgba(37, 99, 235, 0.3)' }}>
                                         {biz.category || 'Retail'}
                                     </div>
                                 </div>
                                 <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
                                     <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '8px', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{biz.businessName}</h3>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '20px' }}><MapPin size={14} /> {biz.location}</div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '8px' }}><MapPin size={14} /> {biz.location}</div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '20px' }}>
+                                        <MessageSquare size={14} /> {biz.reviewCount || 0} {(biz.reviewCount || 0) === 1 ? 'review' : 'reviews'}
+                                    </div>
                                     <div style={{ marginTop: 'auto', display: 'flex', gap: '8px' }}>
                                         <button onClick={() => handleRateClick(biz)} style={{ flex: 1, padding: '10px', background: 'linear-gradient(135deg, var(--primary), var(--accent-purple))', border: 'none', borderRadius: '10px', color: 'white', fontWeight: '600', cursor: 'pointer', fontSize: '0.9rem' }}>Rate</button>
                                         <Link to={`/business/${biz.id}`} style={{ flex: 1, textDecoration: 'none' }}>
@@ -161,10 +164,10 @@ const Home = () => {
             ) : error ? (
                 <div style={{ textAlign: 'center', padding: '100px 0', color: 'var(--text-muted)' }}><p>{error}</p></div>
             ) : (
-                <main style={{ paddingBottom: '120px' }}>
-                    <Section title="New Arrivals" subtitle="Freshly listed businesses waiting for your verdict" items={categorizedData.recentlyAdded} icon={Zap} colorClass="text-yellow" />
-                    <Section title="Top Performers" subtitle="Highest rated experiences as voted by the community" items={categorizedData.topRated} icon={TrendingUp} colorClass="text-cyan" />
-                    <Section title="Community Favorites" subtitle="Most discussed businesses with highest engagement" items={categorizedData.mostPopular} icon={Users} colorClass="text-purple" />
+                <main style={{ paddingBottom: '10px' }}>
+                    <Section title="New Arrivals" subtitle="Freshly listed businesses" items={categorizedData.recentlyAdded} icon={Zap} colorClass="text-yellow" />
+                    <Section title="Top Performers" subtitle="Highest rated experiences" items={categorizedData.topRated} icon={TrendingUp} colorClass="text-cyan" />
+                    <Section title="Community Favorites" subtitle="Most discussed businesses" items={categorizedData.mostPopular} icon={Users} colorClass="text-purple" />
                 </main>
             )}
 
