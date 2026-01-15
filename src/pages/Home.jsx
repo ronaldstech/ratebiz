@@ -1,63 +1,86 @@
-import React from 'react';
-import { Star, TrendingUp, ShieldCheck, Zap, ArrowRight, MessageSquare } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Star, TrendingUp, ShieldCheck, Zap, ArrowRight, MessageSquare, MapPin, Users, Building2, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-
-const businesses = [
-    {
-        id: 1,
-        name: "TechNova Solutions",
-        category: "Software Development",
-        rating: 4.8,
-        reviews: 128,
-        image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=400&q=80"
-    },
-    {
-        id: 2,
-        name: "GreenLeaf Cafe",
-        category: "Food & Beverage",
-        rating: 4.5,
-        reviews: 85,
-        image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=400&q=80"
-    },
-    {
-        id: 3,
-        name: "Elite Fitness Hub",
-        category: "Health & Wellness",
-        rating: 4.9,
-        reviews: 210,
-        image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=400&q=80"
-    },
-    {
-        id: 4,
-        name: "Zenith Marketing",
-        category: "Marketing Agency",
-        rating: 4.2,
-        reviews: 56,
-        image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=400&q=80"
-    }
-];
+import { useNavigate, Link } from 'react-router-dom';
 
 const Home = () => {
     const navigate = useNavigate();
+    const [businesses, setBusinesses] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        const fetchBusinesses = async () => {
+            setIsLoading(true);
+            try {
+                const response = await fetch('https://unimarket-mw.com/ratebiz/api/businesses');
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch businesses');
+                }
+
+                const data = await response.json();
+
+                // Handle different possible response structures
+                let businessesData = [];
+                if (Array.isArray(data)) {
+                    businessesData = data;
+                } else if (data.businesses && Array.isArray(data.businesses)) {
+                    businessesData = data.businesses;
+                } else if (data.data && Array.isArray(data.data)) {
+                    businessesData = data.data;
+                }
+
+                setBusinesses(businessesData);
+                setError('');
+            } catch (err) {
+                console.error('Failed to fetch businesses:', err);
+                setError('Failed to load businesses. Please refresh the page.');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchBusinesses();
+    }, []);
+
+    // Skeleton Loader Component
+    const BusinessCardSkeleton = () => (
+        <div className="glass-card" style={{ padding: '0', overflow: 'hidden', height: '100%', minHeight: '380px', display: 'flex', flexDirection: 'column' }}>
+            <div className="skeleton" style={{ height: '180px', width: '100%', borderRadius: '0' }} />
+            <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                    <div className="skeleton" style={{ width: '80px', height: '24px', borderRadius: '12px' }} />
+                    <div className="skeleton" style={{ width: '60px', height: '24px', borderRadius: '12px' }} />
+                </div>
+                <div className="skeleton" style={{ width: '70%', height: '32px', marginBottom: '12px' }} />
+                <div className="skeleton" style={{ width: '40%', height: '20px', marginBottom: '24px' }} />
+                <div style={{ marginTop: 'auto', display: 'flex', gap: '12px' }}>
+                    <div className="skeleton" style={{ flex: 1, height: '40px', borderRadius: '12px' }} />
+                </div>
+            </div>
+        </div>
+    );
 
     return (
         <div className="container">
             {/* Hero Section */}
-            <section style={{ textAlign: 'center', padding: '80px 0' }}>
+            <section style={{ textAlign: 'center', padding: '100px 0 80px' }}>
                 <motion.h1
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
                     style={{
-                        fontSize: 'clamp(2.5rem, 8vw, 4rem)',
+                        fontSize: 'clamp(3rem, 6vw, 4.5rem)',
                         fontWeight: '900',
                         marginBottom: '24px',
-                        lineHeight: '1.1'
+                        lineHeight: '1.1',
+                        letterSpacing: '-1px'
                     }}
                 >
                     Discover & Rate <br />
                     <span style={{
-                        background: 'linear-gradient(to right, var(--accent-cyan), var(--accent-purple))',
+                        background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-purple))',
                         WebkitBackgroundClip: 'text',
                         WebkitTextFillColor: 'transparent'
                     }}>
@@ -67,11 +90,11 @@ const Home = () => {
                 <motion.p
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
+                    transition={{ delay: 0.2, duration: 0.6 }}
                     style={{
                         color: 'var(--text-muted)',
-                        fontSize: 'max(1rem, 1.25vw)',
-                        maxWidth: '600px',
+                        fontSize: '1.125rem',
+                        maxWidth: '650px',
                         margin: '0 auto 40px',
                         lineHeight: '1.6'
                     }}
@@ -81,105 +104,242 @@ const Home = () => {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
+                    transition={{ delay: 0.3 }}
                     style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}
                 >
-                    <button className="btn-primary" onClick={() => navigate('/signup')}>
+                    <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="btn-primary"
+                        onClick={() => navigate('/signup')}
+                        style={{ padding: '14px 32px', fontSize: '1.1rem', borderRadius: '16px' }}
+                    >
                         Get Started <ArrowRight size={20} />
-                    </button>
-                    <button style={{
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        color: 'white',
-                        border: '1px solid var(--glass-border)',
-                        padding: '12px 24px',
-                        borderRadius: '12px',
-                        fontWeight: '600',
-                        cursor: 'pointer'
-                    }}>
+                    </motion.button>
+                    <motion.button
+                        whileHover={{ scale: 1.05, background: 'rgba(255, 255, 255, 0.1)' }}
+                        whileTap={{ scale: 0.95 }}
+                        style={{
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            color: 'white',
+                            border: '1px solid var(--glass-border)',
+                            padding: '14px 32px',
+                            borderRadius: '16px',
+                            fontWeight: '600',
+                            fontSize: '1.1rem',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                        }}
+                    >
                         Explore Listings
-                    </button>
+                    </motion.button>
                 </motion.div>
             </section>
 
             {/* Stats Section */}
             <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
                 gap: '24px',
-                marginBottom: '80px'
+                marginBottom: '100px'
             }}>
                 {[
-                    { icon: <TrendingUp className="text-cyan" />, label: "Growing Fast", sub: "500+ New Weekly" },
-                    { icon: <ShieldCheck className="text-purple" />, label: "Verified Reviews", sub: "100% Authentic" },
-                    { icon: <Zap className="text-yellow" />, label: "Instant Access", sub: "Free for Everyone" }
+                    { icon: <TrendingUp className="text-cyan" size={28} />, label: "Growing Fast", sub: "500+ New Weekly" },
+                    { icon: <ShieldCheck className="text-purple" size={28} />, label: "Verified Reviews", sub: "100% Authentic" },
+                    { icon: <Zap className="text-yellow" size={28} />, label: "Instant Access", sub: "Free for Everyone" }
                 ].map((stat, i) => (
-                    <div key={i} className="glass-card" style={{ padding: '24px', textAlign: 'center' }}>
-                        <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'center' }}>{stat.icon}</div>
-                        <div style={{ fontWeight: '700', fontSize: '1.125rem' }}>{stat.label}</div>
-                        <div style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{stat.sub}</div>
-                    </div>
+                    <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.1 }}
+                        className="glass-card"
+                        style={{ padding: '32px', textAlign: 'center', borderRadius: '24px', background: 'rgba(30, 41, 59, 0.4)' }}
+                    >
+                        <div style={{
+                            marginBottom: '16px',
+                            display: 'inline-flex',
+                            padding: '16px',
+                            background: 'rgba(255,255,255,0.03)',
+                            borderRadius: '20px',
+                            boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+                        }}>
+                            {stat.icon}
+                        </div>
+                        <div style={{ fontWeight: '700', fontSize: '1.25rem', marginBottom: '4px' }}>{stat.label}</div>
+                        <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{stat.sub}</div>
+                    </motion.div>
                 ))}
             </div>
 
             {/* Listings Section */}
-            <section style={{ paddingBottom: '80px' }}>
+            <section style={{ paddingBottom: '100px' }}>
                 <div style={{
                     display: 'flex',
                     justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '32px'
+                    alignItems: 'end',
+                    marginBottom: '40px'
                 }}>
-                    <h2 style={{ fontSize: '2rem', fontWeight: '800' }}>Featured Businesses</h2>
-                    <a href="#" style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: '600' }}>View All</a>
+                    <div>
+                        <h2 className="gradient-text" style={{ fontSize: '2.5rem', fontWeight: '800', lineHeight: 1.2 }}>Featured Businesses</h2>
+                        <p style={{ color: 'var(--text-muted)', marginTop: '8px', fontSize: '1.1rem' }}>Top rated local businesses in your area</p>
+                    </div>
                 </div>
 
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(max(280px, 20vw), 1fr))',
-                    gap: '24px'
-                }}>
-                    {businesses.map((biz) => (
-                        <motion.div
-                            key={biz.id}
-                            whileHover={{ y: -5 }}
-                            className="glass-card"
-                            style={{ padding: '16px', overflow: 'hidden' }}
-                        >
-                            <div style={{
-                                height: '180px',
-                                borderRadius: '16px',
-                                marginBottom: '16px',
-                                backgroundImage: `url(${biz.image})`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center'
-                            }} />
-                            <div style={{ padding: '0 8px' }}>
-                                <div style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>
-                                    {biz.category}
-                                </div>
-                                <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '12px' }}>{biz.name}</h3>
-
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                        <Star size={16} fill="var(--accent-cyan)" color="var(--accent-cyan)" />
-                                        <span style={{ fontWeight: '700' }}>{biz.rating}</span>
-                                        <span style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>({biz.reviews})</span>
-                                    </div>
-                                    <button style={{
-                                        padding: '8px',
-                                        borderRadius: '50%',
-                                        background: 'rgba(37, 99, 235, 0.1)',
-                                        border: 'none',
-                                        color: 'var(--primary)',
-                                        cursor: 'pointer'
+                {isLoading ? (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '32px' }}>
+                        {[1, 2, 3].map(i => <BusinessCardSkeleton key={i} />)}
+                    </div>
+                ) : error ? (
+                    <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>
+                        <p>{error}</p>
+                    </div>
+                ) : businesses.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '80px', background: 'rgba(255,255,255,0.02)', borderRadius: '24px', border: '1px dashed var(--glass-border)' }}>
+                        <Building2 size={48} style={{ color: 'var(--text-muted)', marginBottom: '16px', opacity: 0.5 }} />
+                        <h3 style={{ fontSize: '1.5rem', marginBottom: '8px' }}>No businesses found yet</h3>
+                        <p style={{ color: 'var(--text-muted)' }}>Be the first to list a business!</p>
+                    </div>
+                ) : (
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
+                        gap: '32px'
+                    }}>
+                        {businesses.map((biz, index) => (
+                            <motion.div
+                                key={biz.id || index}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: index * 0.05 }}
+                                whileHover={{ y: -8, transition: { duration: 0.2 } }}
+                                className="glass-card"
+                                style={{
+                                    padding: '0',
+                                    borderRadius: '24px',
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    height: '100%',
+                                    border: '1px solid rgba(255,255,255,0.08)'
+                                }}
+                            >
+                                {/* Card Image Area */}
+                                <div style={{
+                                    height: '220px',
+                                    width: '100%',
+                                    overflow: 'hidden',
+                                    position: 'relative',
+                                    background: 'rgba(0,0,0,0.2)'
+                                }}>
+                                    <img
+                                        src={biz.imageUrl || "https://unimarket-mw.com/ratebiz/uploads/logo.png"}
+                                        alt={biz.businessName}
+                                        style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            objectFit: 'cover',
+                                            transition: 'transform 0.5s ease'
+                                        }}
+                                        className="card-image"
+                                    />
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '16px',
+                                        right: '16px',
+                                        background: 'rgba(0,0,0,0.6)',
+                                        backdropFilter: 'blur(8px)',
+                                        padding: '6px 12px',
+                                        borderRadius: '20px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '4px',
+                                        fontSize: '0.875rem',
+                                        color: '#fbbf24',
+                                        fontWeight: '600'
                                     }}>
-                                        <MessageSquare size={18} />
-                                    </button>
+                                        <Star size={14} fill="#fbbf24" />
+                                        {biz.rating || '0.0'}
+                                    </div>
                                 </div>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
+
+                                <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '12px' }}>
+                                        <span style={{
+                                            fontSize: '0.75rem',
+                                            background: 'rgba(37, 99, 235, 0.15)',
+                                            color: '#60a5fa',
+                                            padding: '6px 12px',
+                                            borderRadius: '20px',
+                                            fontWeight: '600',
+                                            letterSpacing: '0.5px',
+                                            textTransform: 'uppercase'
+                                        }}>
+                                            {biz.category || 'Local Business'}
+                                        </span>
+                                    </div>
+
+                                    <h3 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '8px', lineHeight: 1.3 }}>
+                                        {biz.businessName}
+                                    </h3>
+
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '24px' }}>
+                                        <MapPin size={16} />
+                                        {biz.location || 'Location not specified'}
+                                    </div>
+
+                                    {/* Stats Row */}
+                                    <div style={{
+                                        display: 'flex',
+                                        gap: '16px',
+                                        marginBottom: '24px',
+                                        paddingBottom: '24px',
+                                        borderBottom: '1px solid rgba(255,255,255,0.05)'
+                                    }}>
+                                        <div style={{ flex: 1 }}>
+                                            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Total Reviews</p>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '1rem', fontWeight: '600' }}>
+                                                <Users size={16} color="var(--accent-purple)" />
+                                                {biz.reviewCount || 0}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style={{ marginTop: 'auto', display: 'flex', gap: '12px' }}>
+                                        <Link
+                                            to={`/business/${biz.id}`}
+                                            style={{ textDecoration: 'none', flex: 1 }}
+                                        >
+                                            <button style={{
+                                                width: '100%',
+                                                padding: '12px',
+                                                background: 'linear-gradient(135deg, var(--primary), var(--accent-purple))',
+                                                border: 'none',
+                                                borderRadius: '12px',
+                                                color: 'white',
+                                                fontWeight: '600',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                gap: '8px',
+                                                transition: 'all 0.2s ease',
+                                                boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)'
+                                            }}>
+                                                Rate Now <Star size={16} />
+                                            </button>
+                                        </Link>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                )}
             </section>
         </div>
     );

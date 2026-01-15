@@ -251,14 +251,38 @@ const Navbar = () => {
                                         }}
                                     />
                                 </div>
-                                <Link to="/login" style={{ textDecoration: 'none', color: 'white', fontWeight: '600' }}>Sign In</Link>
-                                <button
-                                    onClick={() => navigate('/signup')}
-                                    className="btn-primary"
-                                    style={{ width: '100%' }}
-                                >
-                                    Join Now
-                                </button>
+                                {localStorage.getItem('ratebiz_token') ? (
+                                    <>
+                                        <Link to="/my-businesses" style={{ textDecoration: 'none', color: 'white', fontWeight: '600' }}>Businesses</Link>
+                                        <button
+                                            onClick={() => {
+                                                localStorage.removeItem('ratebiz_token');
+                                                localStorage.removeItem('ratebiz_user');
+                                                navigate('/login');
+                                            }}
+                                            className="btn-primary"
+                                            style={{
+                                                width: '100%',
+                                                background: 'rgba(239, 68, 68, 0.2)',
+                                                border: '1px solid rgba(239, 68, 68, 0.3)',
+                                                color: '#fca5a5'
+                                            }}
+                                        >
+                                            Logout
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Link to="/login" style={{ textDecoration: 'none', color: 'white', fontWeight: '600' }}>Sign In</Link>
+                                        <button
+                                            onClick={() => navigate('/signup')}
+                                            className="btn-primary"
+                                            style={{ width: '100%' }}
+                                        >
+                                            Join Now
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </motion.div>
