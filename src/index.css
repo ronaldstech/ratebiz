@@ -45,7 +45,7 @@ body {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 40px;
+    padding: 0 0px;
 }
 
 .glass-card {
@@ -173,19 +173,19 @@ body {
 /* Responsiveness */
 @media (max-width: 768px) {
     .container {
-        padding: 0 12px;
+        padding: 0 16px;
     }
 
     .glass-card {
-        padding: 20px !important;
+        padding: 16px !important;
     }
 
     section {
-        padding: 40px 0 !important;
+        padding: 30px 0 !important;
     }
 
     h1 {
-        font-size: 2rem !important;
+        font-size: 1.8rem !important;
     }
 }
 
@@ -418,13 +418,13 @@ body {
 
 @media (max-width: 768px) {
     .container {
-        padding: 0 20px;
+        padding: 0 16px;
     }
 
     .hero-section {
         height: auto !important;
-        min-height: 450px;
-        padding: 100px 0 40px;
+        min-height: 380px;
+        padding: 80px 0 30px;
         align-items: center;
     }
 
@@ -474,5 +474,130 @@ body {
 
     .hide-mobile {
         display: none;
+    }
+}
+
+/* Horizontal Scroll Utilities */
+.horizontal-scroll-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 24px;
+    padding: 20px 4px 30px;
+    /* Added more bottom padding for the scrollbar */
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+.horizontal-scroll-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.horizontal-scroll-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    margin: 0 4px;
+}
+
+.horizontal-scroll-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(to right, var(--primary), var(--accent-purple));
+    border-radius: 10px;
+}
+
+.horizontal-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to right, var(--primary-hover), var(--accent-purple));
+}
+
+.horizontal-scroll-item {
+    flex: 0 0 340px;
+    scroll-snap-align: start;
+}
+
+@media (max-width: 768px) {
+    .horizontal-scroll-item {
+        flex: 0 0 280px;
+    }
+}
+
+.home-section {
+    padding: 60px 0;
+}
+
+.home-hero {
+    text-align: center;
+    padding: 120px 0 60px;
+}
+
+/* Consolidated Mobile Optimizations */
+@media (max-width: 768px) {
+
+    /* Minimize hero section to maximize listing space */
+    .home-hero {
+        padding: 60px 0 20px !important;
+    }
+
+    /* Reduce section spacing for more vertical space */
+    .home-section {
+        padding: 20px 0 !important;
+    }
+
+    /* Compact horizontal scroll containers */
+    .horizontal-scroll-container {
+        padding: 10px 4px 15px !important;
+        gap: 12px !important;
+    }
+
+    /* Reduce button padding */
+    .btn-primary {
+        padding: 10px 20px !important;
+        font-size: 0.95rem !important;
+    }
+
+    /* Compact inputs */
+    .input-group input {
+        padding: 10px 14px 10px 44px !important;
+    }
+
+    .social-btn {
+        padding: 8px !important;
+    }
+
+    /* Business details spacing */
+    .detail-grid {
+        gap: 24px !important;
+    }
+}
+
+/* Mobile Section Header Optimization */
+@media (max-width: 768px) {
+    .home-section h2 {
+        font-size: 1.5rem !important;
+        margin-bottom: 4px !important;
+    }
+
+    .home-section p {
+        font-size: 0.85rem !important;
+        margin-bottom: 8px !important;
+    }
+
+    /* Reduce margins in section headers */
+    .home-section>div:first-child {
+        margin-bottom: 16px !important;
+    }
+}
+
+/* Section Header Styles */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    margin-bottom: 32px;
+    padding: 0 4px;
+}
+
+/* Mobile overrides for section headers */
+@media (max-width: 768px) {
+    .section-header {
+        margin-bottom: 16px !important;
+        padding: 0 2px !important;
     }
 }
