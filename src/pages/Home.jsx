@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Star, TrendingUp, ShieldCheck, Zap, ArrowRight, MessageSquare, MapPin, Users, Building2, Loader2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Star, TrendingUp, ShieldCheck, Zap, ArrowRight, MessageSquare, MapPin, Users, Building2, Loader2, CheckCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, Link } from 'react-router-dom';
+import ReviewModal from '../components/ReviewModal';
 
 const Home = () => {
     const navigate = useNavigate();
     const [businesses, setBusinesses] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
+    const [selectedBusiness, setSelectedBusiness] = useState(null);
+    const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
     useEffect(() => {
         const fetchBusinesses = async () => {
@@ -44,6 +48,21 @@ const Home = () => {
         fetchBusinesses();
     }, []);
 
+    const handleRateClick = (business) => {
+        const token = localStorage.getItem('ratebiz_token');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        setSelectedBusiness(business);
+        setIsReviewModalOpen(true);
+    };
+
+    const handleReviewSuccess = () => {
+        setShowSuccessMessage(true);
+        setTimeout(() => setShowSuccessMessage(false), 3000);
+    };
+
     // Skeleton Loader Component
     const BusinessCardSkeleton = () => (
         <div className="glass-card" style={{ padding: '0', overflow: 'hidden', height: '100%', minHeight: '380px', display: 'flex', flexDirection: 'column' }}>
@@ -64,6 +83,34 @@ const Home = () => {
 
     return (
         <div className="container">
+            {/* Success Toast */}
+            <AnimatePresence>
+                {showSuccessMessage && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -50, x: '-50%' }}
+                        animate={{ opacity: 1, y: 20, x: '-50%' }}
+                        exit={{ opacity: 0, y: -50, x: '-50%' }}
+                        style={{
+                            position: 'fixed',
+                            top: 0,
+                            left: '50%',
+                            zIndex: 10000,
+                            background: '#10b981',
+                            color: 'white',
+                            padding: '16px 24px',
+                            borderRadius: '50px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                            boxShadow: '0 10px 30px rgba(16, 185, 129, 0.3)',
+                            fontWeight: '600'
+                        }}
+                    >
+                        <CheckCircle size={24} /> Review Submitted Successfully!
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* Hero Section */}
             <section style={{ textAlign: 'center', padding: '100px 0 80px' }}>
                 <motion.h1
@@ -311,12 +358,10 @@ const Home = () => {
                                     </div>
 
                                     <div style={{ marginTop: 'auto', display: 'flex', gap: '12px' }}>
-                                        <Link
-                                            to={`/business/${biz.id}`}
-                                            style={{ textDecoration: 'none', flex: 1 }}
-                                        >
-                                            <button style={{
-                                                width: '100%',
+                                        <button
+                                            onClick={() => handleRateClick(biz)}
+                                            style={{
+                                                flex: 1,
                                                 padding: '12px',
                                                 background: 'linear-gradient(135deg, var(--primary), var(--accent-purple))',
                                                 border: 'none',
@@ -330,8 +375,30 @@ const Home = () => {
                                                 gap: '8px',
                                                 transition: 'all 0.2s ease',
                                                 boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)'
+                                            }}
+                                        >
+                                            Rate <Star size={16} />
+                                        </button>
+                                        <Link
+                                            to={`/business/${biz.id}`}
+                                            style={{ flex: 1, textDecoration: 'none' }}
+                                        >
+                                            <button style={{
+                                                width: '100%',
+                                                padding: '12px',
+                                                background: 'rgba(255,255,255,0.05)',
+                                                border: '1px solid var(--glass-border)',
+                                                borderRadius: '12px',
+                                                color: 'white',
+                                                fontWeight: '600',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                gap: '8px',
+                                                transition: 'all 0.2s ease'
                                             }}>
-                                                Rate Now <Star size={16} />
+                                                Details <ArrowRight size={16} />
                                             </button>
                                         </Link>
                                     </div>
@@ -341,6 +408,13 @@ const Home = () => {
                     </div>
                 )}
             </section>
+
+            <ReviewModal
+                isOpen={isReviewModalOpen}
+                onClose={() => setIsReviewModalOpen(false)}
+                business={selectedBusiness}
+                onSuccess={handleReviewSuccess}
+            />
         </div>
     );
 };
